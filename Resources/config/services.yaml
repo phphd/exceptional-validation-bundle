@@ -17,12 +17,12 @@ services:
         alias: phd_exceptional_validation.rule_set_assembler.object
 
     phd_exceptional_validation.violations_list_formatter:
-        class: PhPhD\ExceptionalValidation\Formatter\ExceptionalViolationsListFormatter
+        class: PhPhD\ExceptionalValidation\Formatter\ExceptionalViolationListFormatter
         arguments:
             - '@phd_exceptional_validation.violation_formatter'
         lazy: true
         tags:
-            - { name: 'proxy', interface: 'PhPhD\ExceptionalValidation\Formatter\ExceptionViolationsListFormatter' }
+            - { name: 'proxy', interface: 'PhPhD\ExceptionalValidation\Formatter\ExceptionViolationListFormatter' }
 
     phd_exceptional_validation.violation_formatter:
         class: PhPhD\ExceptionalValidation\Formatter\ExceptionalViolationFormatter

@@ -6,6 +6,6 @@ namespace PhPhD\ExceptionalValidation\Tests\Stub\Exception;
 
 use RuntimeException;
 
-final class NestedIterableItemCapturedException extends RuntimeException
+final class NestedItemCapturedException extends RuntimeException
 {
 }

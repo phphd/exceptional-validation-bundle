@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PhPhD\ExceptionalValidation\Model\Rule;
 
+use PhPhD\ExceptionalValidation\Model\Exception\ExceptionPackage;
 use PhPhD\ExceptionalValidation\Model\ValueObject\PropertyPath;
-use PhPhD\ExceptionalValidation\Model\ValueObject\ThrownExceptions;
 
 /** @internal */
 final class ObjectRuleSet implements CaptureRule
@@ -17,9 +17,9 @@ final class ObjectRuleSet implements CaptureRule
     ) {
     }
 
-    public function capture(ThrownExceptions $thrownExceptions): array
+    public function process(ExceptionPackage $exceptions): bool
     {
-        return $this->ruleSet->capture($thrownExceptions);
+        return $this->ruleSet->process($exceptions);
     }
 
     public function getPropertyPath(): PropertyPath

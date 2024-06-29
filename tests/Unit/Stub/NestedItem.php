@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace PhPhD\ExceptionalValidation\Tests\Stub;
 
 use PhPhD\ExceptionalValidation;
-use PhPhD\ExceptionalValidation\Tests\Stub\Exception\NestedIterableItemCapturedException;
+use PhPhD\ExceptionalValidation\Tests\Stub\Exception\NestedItemCapturedException;
 
 #[ExceptionalValidation]
 final class NestedItem
 {
-    #[ExceptionalValidation\Capture(NestedIterableItemCapturedException::class, 'oops', when: [self::class, 'matchesValue'])]
+    #[ExceptionalValidation\Capture(NestedItemCapturedException::class, 'oops', when: [self::class, 'matchesValue'])]
     private int $property;
 
     public function __construct(int $property)
@@ -18,7 +18,7 @@ final class NestedItem
         $this->property = $property;
     }
 
-    public function matchesValue(NestedIterableItemCapturedException $exception): bool
+    public function matchesValue(NestedItemCapturedException $exception): bool
     {
         return $exception->getCode() === $this->property;
     }

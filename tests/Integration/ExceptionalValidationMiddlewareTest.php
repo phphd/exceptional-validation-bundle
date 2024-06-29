@@ -45,7 +45,7 @@ final class ExceptionalValidationMiddlewareTest extends TestCase
 
     public function testReturnsResultEnvelopeWhenNoException(): void
     {
-        $envelope = Envelope::wrap(HandleableMessageStub::createEmpty());
+        $envelope = Envelope::wrap(HandleableMessageStub::create());
         $resultEnvelope = Envelope::wrap(new stdClass());
 
         $this->nextMiddleware
@@ -60,7 +60,7 @@ final class ExceptionalValidationMiddlewareTest extends TestCase
 
     public function testRethrowsHandlerFailedExceptionWhenNotCaught(): void
     {
-        $envelope = Envelope::wrap(HandleableMessageStub::createEmpty());
+        $envelope = Envelope::wrap(HandleableMessageStub::create());
 
         $previous = new PropertyCapturableException();
         $this->willThrow($exception = new HandlerFailedException($envelope, [$previous]));

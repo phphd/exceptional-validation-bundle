@@ -13,7 +13,7 @@ use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\PropertyRuleSetA
 use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyCaptureRulesAssembler;
 use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyNestedValidIterableRulesAssembler;
 use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyNestedValidObjectRuleAssembler;
-use PhPhD\ExceptionalValidation\Formatter\ExceptionViolationsListFormatter;
+use PhPhD\ExceptionalValidation\Formatter\ExceptionViolationListFormatter;
 use PhPhD\ExceptionalValidation\Handler\ExceptionalHandler;
 use PhPhD\ExceptionalValidation\Handler\ExceptionHandler;
 use PhPhD\ExceptionalValidationBundle\Messenger\ExceptionalValidationMiddleware;
@@ -70,7 +70,7 @@ final class DependencyInjectionTest extends TestCase
     private function checkViolationsListFormatter(): void
     {
         $violationsListFormatter = self::getContainer()->get('phd_exceptional_validation.violations_list_formatter');
-        self::assertInstanceOf(ExceptionViolationsListFormatter::class, $violationsListFormatter);
+        self::assertInstanceOf(ExceptionViolationListFormatter::class, $violationsListFormatter);
         self::assertInstanceOf(LazyObjectInterface::class, $violationsListFormatter);
     }
 

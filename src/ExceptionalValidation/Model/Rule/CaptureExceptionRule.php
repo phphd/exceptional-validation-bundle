@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace PhPhD\ExceptionalValidation\Model\Rule;
 
 use PhPhD\ExceptionalValidation\Model\Condition\MatchCondition;
-use PhPhD\ExceptionalValidation\Model\ValueObject\CaughtException;
+use PhPhD\ExceptionalValidation\Model\Exception\ExceptionPackage;
 use PhPhD\ExceptionalValidation\Model\ValueObject\PropertyPath;
-use PhPhD\ExceptionalValidation\Model\ValueObject\ThrownExceptions;
+use Throwable;
 
 /** @internal */
-final class CaptureExceptionRule implements CaptureRule
+final class CaptureExceptionRule implements CaptureRule, MatchCondition
 {
     public function __construct(
         private readonly CaptureRule $parent,
@@ -19,15 +19,16 @@ final class CaptureExceptionRule implements CaptureRule
     ) {
     }
 
-    public function capture(ThrownExceptions $thrownExceptions): array
+    public function process(ExceptionPackage $exceptions): bool
     {
-        $exception = $thrownExceptions->ejectWith($this->condition);
+        $exceptions->processRule($this);
 
-        if (null === $exception) {
-            return [];
-        }
+        return $exceptions->isProcessed();
+    }
 
-        return [new CaughtException($exception, $this)];
+    public function matches(Throwable $exception): bool
+    {
+        return $this->condition->matches($exception);
     }
 
     public function getPropertyPath(): PropertyPath

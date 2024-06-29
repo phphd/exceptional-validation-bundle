@@ -46,72 +46,72 @@ final class HandleableMessageStub
     {
     }
 
-    public static function createEmpty(): self
+    public static function create(): self
     {
         return new self();
     }
 
-    public static function createWithMessageText(string $messageText): self
+    public function withMessageText(string $messageText): self
     {
-        $message = new self();
+        $message = clone $this;
         $message->messageText = $messageText;
 
         return $message;
     }
 
-    public static function createWithObjectProperty(object $objectProperty): self
+    public function withObjectProperty(object $objectProperty): self
     {
-        $message = new self();
+        $message = clone $this;
         $message->objectProperty = $objectProperty;
 
         return $message;
     }
 
-    public static function createWithOrdinaryObject(NestedHandleableMessage $ordinaryObject): self
+    public function withOrdinaryObject(NestedHandleableMessage $ordinaryObject): self
     {
-        $message = new self();
+        $message = clone $this;
         $message->ordinaryObject = $ordinaryObject;
 
         return $message;
     }
 
-    public static function createWithNestedObject(NestedHandleableMessage $nestedObject): self
+    public function withNestedObject(NestedHandleableMessage $nestedObject): self
     {
-        $message = new self();
+        $message = clone $this;
         $message->nestedObject = $nestedObject;
 
         return $message;
     }
 
-    public static function createWithConditionalMessage(int $firstConditionalProperty, int $secondConditionalProperty): self
+    public function withConditionalMessage(int $firstConditionalProperty, int $secondConditionalProperty): self
     {
-        return self::createWithNestedObject(NestedHandleableMessage::createWithConditionalMessage(
+        return $this->withNestedObject(NestedHandleableMessage::createWithConditionalMessage(
             ConditionalMessage::createWithConditionalProperties($firstConditionalProperty, $secondConditionalProperty),
         ));
     }
 
     /** @param array<array-key,NestedItem> $items */
-    public static function createWithNestedArrayItems(array $items): self
+    public function withNestedArrayItems(array $items): self
     {
-        $message = new self();
+        $message = clone $this;
         $message->nestedArrayItems = $items;
 
         return $message;
     }
 
     /** @param ArrayObject<array-key,NestedItem> $items */
-    public static function createWithNestedIterableItems(ArrayObject $items): self
+    public function withNestedIterableItems(ArrayObject $items): self
     {
-        $message = new self();
+        $message = clone $this;
         $message->nestedIterableItems = $items;
 
         return $message;
     }
 
     /** @param array<array-key,NestedItem> $justArray */
-    public static function createWithJustArray(array $justArray): self
+    public function withJustArray(array $justArray): self
     {
-        $message = new self();
+        $message = clone $this;
         $message->justArray = $justArray;
 
         return $message;
