@@ -124,6 +124,26 @@ final class ProductDetails
 In this example, whenever `InsufficientStockException` is thrown, it will be captured and mapped to the
 `product.quantity` property with the corresponding message translation.
 
+### Capturing ValidationFailedException
+
+You can specify `#[Capture(ValidationFailedException::class)]` on the property to capture multiple validation errors for
+the given property at once. By default, it is expected that `ValidationFailedException` will be for the particular
+validated value so that all violations may be mapped for the particular property.
+
+```php
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+
+#[ExceptionalValidation]
+final class RegisterUserCommand
+{
+    #[CaptureList(ValidationFailedException::class)]
+    private string $email;
+
+    #[CaptureList(ValidationFailedException::class)]
+    private string $password;
+}
+```
+
 ### Capture Conditions
 
 `#[Capture]` attribute accepts the callback function to determine whether particular exception instance should
