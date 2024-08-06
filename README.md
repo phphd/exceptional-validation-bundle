@@ -124,27 +124,7 @@ final class ProductDetails
 In this example, whenever `InsufficientStockException` is thrown, it will be captured and mapped to the
 `product.quantity` property with the corresponding message translation.
 
-### Capturing ValidationFailedException
-
-You can specify `#[Capture(ValidationFailedException::class)]` on the property to capture multiple validation errors for
-the given property at once. By default, it is expected that `ValidationFailedException` will be for the particular
-validated value so that all violations may be mapped for the particular property.
-
-```php
-use Symfony\Component\Validator\Exception\ValidationFailedException;
-
-#[ExceptionalValidation]
-final class RegisterUserCommand
-{
-    #[CaptureList(ValidationFailedException::class)]
-    private string $email;
-
-    #[CaptureList(ValidationFailedException::class)]
-    private string $password;
-}
-```
-
-### Capture Conditions
+### Capture Closure Conditions
 
 `#[Capture]` attribute accepts the callback function to determine whether particular exception instance should
 be captured for the given property or not. It allows more dynamic exception handling scenarios:
@@ -209,7 +189,9 @@ final class TransferMoneyCommand
     #[Capture(BlockedCardException::class, 'wallet.blocked_card', condition: 'invalid_value')]
     private int $depositCardId;
 }
+```
 
+```php
 use PhPhD\ExceptionalValidation\Model\Condition\Exception\InvalidValueException;
 use RuntimeException;
 
@@ -230,6 +212,32 @@ final class BlockedCardException extends RuntimeException implements InvalidValu
 
 In this example `BlockedCardException` implements `InvalidValueException` interface, which allows us to compare the
 exception invalid value directly with the property value. If the values are equal, then the exception is captured.
+
+### Capturing ValidationFailedException
+
+You can specify `#[Capture(ValidationFailedException::class)]` on the property to capture multiple validation errors for
+the given property at once. Since validation process usually involves multiple properties to be validated, each
+particular `ValidationFailedException` should be matched to the respective property with the `validated_value` condition.
+
+```php
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+
+#[ExceptionalValidation]
+final class RegisterUserCommand
+{
+    #[Capture(ValidationFailedException::class, condition: 'validated_value')]
+    private string $email;
+
+    #[Capture(ValidationFailedException::class, condition: 'validated_value')]
+    private string $password;
+}
+```
+
+In this example, `ValidationFailedException` is captured for both `email` and `password` properties, and the
+`validated_value` condition is used to match the exception to the respective property.
+
+The `$email` property value is matched with the actual value from the exception so that this property will capture
+only the errors related to the email field. The same applies to the `$password` property.
 
 ### Capturing exceptions on nested array items
 

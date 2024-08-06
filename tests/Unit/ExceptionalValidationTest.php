@@ -59,7 +59,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @covers \PhPhD\ExceptionalValidation\Model\Rule\LazyRuleSet
  * @covers \PhPhD\ExceptionalValidation\Model\Rule\CaptureExceptionRule
  * @covers \PhPhD\ExceptionalValidation\Model\Condition\MatchByExceptionClassCondition
- * @covers \PhPhD\ExceptionalValidation\Model\Condition\MatchByInvalidValueCondition
+ * @covers \PhPhD\ExceptionalValidation\Model\Condition\MatchByInvalidValueExceptionCondition
  * @covers \PhPhD\ExceptionalValidation\Model\Condition\MatchWithClosureCondition
  * @covers \PhPhD\ExceptionalValidation\Model\Condition\CompositeMatchCondition
  * @covers \PhPhD\ExceptionalValidation\Model\ValueObject\PropertyPath
