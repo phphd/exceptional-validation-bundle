@@ -7,11 +7,11 @@ namespace PhPhD\ExceptionalValidation\Tests\Stub;
 use ArrayObject;
 use LogicException;
 use PhPhD\ExceptionalValidation;
-use PhPhD\ExceptionalValidation\Model\Condition\Exception\InvalidValueException;
 use PhPhD\ExceptionalValidation\Tests\Stub\Exception\CustomFormattedException;
 use PhPhD\ExceptionalValidation\Tests\Stub\Exception\MessageContainingException;
 use PhPhD\ExceptionalValidation\Tests\Stub\Exception\ObjectPropertyCapturableException;
 use PhPhD\ExceptionalValidation\Tests\Stub\Exception\PropertyCapturableException;
+use PhPhD\ExceptionalValidation\Tests\Stub\Exception\SomeInvalidValueException;
 use PhPhD\ExceptionalValidation\Tests\Stub\Exception\StaticPropertyCapturedException;
 use Symfony\Component\Validator\Constraints\Valid;
 
@@ -48,14 +48,14 @@ final class HandleableMessageStub
 
     private array $justArray;
 
-    #[ExceptionalValidation\Capture(InvalidValueException::class, 'oops', condition: 'invalid_value')]
-    private string $firstInvalidValue = 'first';
+    #[ExceptionalValidation\Capture(SomeInvalidValueException::class, 'oops', condition: 'invalid_value')]
+    private string $notMatchedCondition = 'not matched';
 
-    #[ExceptionalValidation\Capture(InvalidValueException::class, 'oops', condition: 'invalid_value')]
-    private string $notMatched;
+    #[ExceptionalValidation\Capture(SomeInvalidValueException::class, 'oops', condition: 'invalid_value')]
+    private string $matchedCondition = 'matched!';
 
-    #[ExceptionalValidation\Capture(InvalidValueException::class, 'oops', condition: 'invalid_value')]
-    private string $secondInvalidValue = 'second';
+    #[ExceptionalValidation\Capture(SomeInvalidValueException::class, 'oops')]
+    private string $anotherMatchedAsNoCondition;
 
     #[ExceptionalValidation\Capture(MessageContainingException::class)]
     private int $fallBackToExceptionMessage;

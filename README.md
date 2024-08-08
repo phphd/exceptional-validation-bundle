@@ -124,7 +124,7 @@ final class ProductDetails
 In this example, whenever `InsufficientStockException` is thrown, it will be captured and mapped to the
 `product.quantity` property with the corresponding message translation.
 
-### Capture Conditions
+### Capture Closure Conditions
 
 `#[Capture]` attribute accepts the callback function to determine whether particular exception instance should
 be captured for the given property or not. It allows more dynamic exception handling scenarios:
@@ -175,9 +175,9 @@ when exception is processed. If `isWithdrawalCardBlocked` callback returns `true
 
 ### Simple Capture Conditions
 
-Since in most cases capture conditions come down to the value comparison, it's easier to make your exception implement
-`InvalidValueException` interface rather than implementing `when:` closure every time. This way simple value comparison
-will be done for you:
+Since in most cases capture conditions come down to the simple value comparison, it's easier to make your exception
+implement `InvalidValueException` interface and specify `condition: 'invalid_value'` rather than implementing `when:`
+closure every time. This way you can avoid boilerplate code and make your code more readable.
 
 ```php
 #[ExceptionalValidation]
@@ -189,7 +189,11 @@ final class TransferMoneyCommand
     #[Capture(BlockedCardException::class, 'wallet.blocked_card', condition: 'invalid_value')]
     private int $depositCardId;
 }
+```
 
+The `BlockedCardException` should implement `InvalidValueException` interface:
+
+```php
 use PhPhD\ExceptionalValidation\Model\Condition\Exception\InvalidValueException;
 use RuntimeException;
 
@@ -208,8 +212,8 @@ final class BlockedCardException extends RuntimeException implements InvalidValu
 }
 ```
 
-In this example `BlockedCardException` implements `InvalidValueException` interface, which allows us to compare the
-exception invalid value directly with the property value. If the values are equal, then the exception is captured.
+In this example `BlockedCardException` could be captured both for `withdrawalCardId` and `depositCardId` properties
+depending on the `cardId` value from the exception.
 
 ### Capturing exceptions on nested array items
 

@@ -8,7 +8,7 @@ use PhPhD\ExceptionalValidation\Model\Condition\Exception\InvalidValueException;
 use Throwable;
 
 /** @internal */
-final class MatchByInvalidValueCondition implements MatchCondition
+final class InvalidValueExceptionMatchCondition implements MatchCondition
 {
     public function __construct(
         private readonly mixed $value,

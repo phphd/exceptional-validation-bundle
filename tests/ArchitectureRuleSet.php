@@ -15,6 +15,7 @@ use PhPhD\ExceptionalValidation;
 use PhPhD\ExceptionalValidation\Assembler\CaptureRuleSetAssembler;
 use PhPhD\ExceptionalValidation\Assembler\Object\ObjectRuleSetAssembler;
 use PhPhD\ExceptionalValidation\Capture;
+use PhPhD\ExceptionalValidation\ConditionFactory\MatchConditionFactory;
 use PhPhD\ExceptionalValidation\Formatter\ExceptionViolationListFormatter;
 use PhPhD\ExceptionalValidation\Handler\ExceptionHandler;
 use PhPhD\ExceptionalValidation\Model\Exception\Adapter\ThrownException;
@@ -53,6 +54,12 @@ final class ArchitectureRuleSet
     public function testViolationFormatterDependencies(): Rule
     {
         return $this->layerRule('formatter');
+    }
+
+    #[TestRule]
+    public function testMatchConditionFactoryDependencies(): Rule
+    {
+        return $this->layerRule('matchConditionFactory');
     }
 
     #[TestRule]
@@ -120,6 +127,15 @@ final class ArchitectureRuleSet
                     Selector::classname(ExceptionalValidation::class),
                     Selector::classname(Capture::class),
                     Selector::classname(Valid::class),
+                    Selector::classname(MatchConditionFactory::class),
+                    Selector::classname(Assert::class),
+                ],
+            ],
+            'matchConditionFactory' => [
+                'deps' => [
+                    $this->model(),
+                    Selector::classname(Capture::class),
+                    Selector::inNamespace(class_namespace(ContainerInterface::class)),
                 ],
             ],
             'model' => [
@@ -150,6 +166,11 @@ final class ArchitectureRuleSet
     public function captureRuleSetAssembler(): ClassNamespace
     {
         return Selector::inNamespace(class_namespace(CaptureRuleSetAssembler::class));
+    }
+
+    public function matchConditionFactory(): ClassNamespace
+    {
+        return Selector::inNamespace(class_namespace(MatchConditionFactory::class));
     }
 
     public function model(): ClassNamespace

@@ -61,6 +61,17 @@ services:
 
     phd_exceptional_validation.rule_set_assembler.property.rules.captures:
         class: PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyCaptureRulesAssembler
+        arguments: [ '@phd_exceptional_validation.match_condition_factory' ]
+
+    phd_exceptional_validation.match_condition_factory:
+        class: PhPhD\ExceptionalValidation\ConditionFactory\CaptureMatchConditionFactory
+        arguments:
+            - !tagged_locator { tag: 'exceptional_validation.match_condition_factory', index_by: 'id' }
+
+    phd_exceptional_validation.match_condition_factory.invalid_value:
+        class: PhPhD\ExceptionalValidation\ConditionFactory\InvalidValueExceptionMatchConditionFactory
+        tags:
+            - { name: 'exceptional_validation.match_condition_factory', id: 'invalid_value' }
 
     phd_exceptional_validation.rule_set_assembler.property.rules.nested_valid_object:
         class: PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyNestedValidObjectRuleAssembler

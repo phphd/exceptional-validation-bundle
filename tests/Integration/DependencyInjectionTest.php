@@ -13,6 +13,8 @@ use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\PropertyRuleSetA
 use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyCaptureRulesAssembler;
 use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyNestedValidIterableRulesAssembler;
 use PhPhD\ExceptionalValidation\Assembler\Object\Rules\Property\Rules\PropertyNestedValidObjectRuleAssembler;
+use PhPhD\ExceptionalValidation\ConditionFactory\CaptureMatchConditionFactory;
+use PhPhD\ExceptionalValidation\ConditionFactory\InvalidValueExceptionMatchConditionFactory;
 use PhPhD\ExceptionalValidation\Formatter\DefaultViolationFormatter;
 use PhPhD\ExceptionalValidation\Formatter\DelegatingExceptionViolationFormatter;
 use PhPhD\ExceptionalValidation\Formatter\ExceptionViolationListFormatter;
@@ -41,6 +43,8 @@ final class DependencyInjectionTest extends TestCase
         $this->checkExceptionHandler();
 
         $this->checkRuleSetAssembler();
+
+        $this->checkConditionFactory();
 
         $this->checkViolationsListFormatter();
 
@@ -74,6 +78,22 @@ final class DependencyInjectionTest extends TestCase
     {
         $ruleSetAssembler = self::getContainer()->get('phd_exceptional_validation.rule_set_assembler');
         self::assertInstanceOf(ObjectRuleSetAssembler::class, $ruleSetAssembler);
+    }
+
+    private function checkConditionFactory(): void
+    {
+        $matchConditionFactory = self::getContainer()->get('phd_exceptional_validation.match_condition_factory');
+        self::assertInstanceOf(CaptureMatchConditionFactory::class, $matchConditionFactory);
+
+        $conditionFactoryRegistry = $this->getConditionFactoryRegistry($matchConditionFactory);
+        self::assertInstanceOf(ServiceLocator::class, $conditionFactoryRegistry);
+
+        $providedServices = $conditionFactoryRegistry->getProvidedServices();
+        krsort($providedServices);
+
+        self::assertSame([
+            'invalid_value' => InvalidValueExceptionMatchConditionFactory::class,
+        ], $providedServices);
     }
 
     private function checkViolationsListFormatter(): void
@@ -149,6 +169,14 @@ final class DependencyInjectionTest extends TestCase
         /** @psalm-suppress InaccessibleProperty */
         return (static fn (): ContainerInterface => $violationFormatter->formatterRegistry) // @phpstan-ignore-line
             ->bindTo(null, DelegatingExceptionViolationFormatter::class)?->__invoke()
+        ;
+    }
+
+    private function getConditionFactoryRegistry(CaptureMatchConditionFactory $matchConditionFactory): ?ContainerInterface
+    {
+        /** @psalm-suppress InaccessibleProperty */
+        return (static fn (): ContainerInterface => $matchConditionFactory->conditionFactoryRegistry) // @phpstan-ignore-line
+            ->bindTo(null, CaptureMatchConditionFactory::class)?->__invoke()
         ;
     }
 }

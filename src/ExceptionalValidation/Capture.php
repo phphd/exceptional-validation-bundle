@@ -17,6 +17,7 @@ final class Capture
         /** @var class-string<Exception> */
         private readonly string $exception,
         private readonly ?string $message = null,
+        /** @var ?non-empty-string */
         private readonly ?string $condition = null,
         /** @var ?array{0:object|class-string,1:string} */
         private readonly ?array $when = null,
@@ -24,10 +25,6 @@ final class Capture
     ) {
         if (null !== $this->when) {
             Assert::count($this->when, 2);
-        }
-
-        if (null !== $this->condition) {
-            Assert::same($this->condition, 'invalid_value');
         }
     }
 

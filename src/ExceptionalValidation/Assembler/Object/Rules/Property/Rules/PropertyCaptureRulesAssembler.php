@@ -8,19 +8,12 @@ use ArrayIterator;
 use PhPhD\ExceptionalValidation\Assembler\CaptureRuleSetAssembler;
 use PhPhD\ExceptionalValidation\Assembler\CaptureRuleSetAssemblerEnvelope;
 use PhPhD\ExceptionalValidation\Capture;
-use PhPhD\ExceptionalValidation\Model\Condition\CompositeMatchCondition;
-use PhPhD\ExceptionalValidation\Model\Condition\Exception\InvalidValueException;
-use PhPhD\ExceptionalValidation\Model\Condition\MatchByExceptionClassCondition;
-use PhPhD\ExceptionalValidation\Model\Condition\MatchByInvalidValueCondition;
+use PhPhD\ExceptionalValidation\ConditionFactory\MatchConditionFactory;
 use PhPhD\ExceptionalValidation\Model\Condition\MatchCondition;
-use PhPhD\ExceptionalValidation\Model\Condition\MatchWithClosureCondition;
 use PhPhD\ExceptionalValidation\Model\Rule\CaptureExceptionRule;
 use PhPhD\ExceptionalValidation\Model\Rule\CaptureRule;
 use PhPhD\ExceptionalValidation\Model\Rule\CompositeRuleSet;
-
-use function array_filter;
-use function array_values;
-use function is_a;
+use Webmozart\Assert\Assert;
 
 /**
  * @internal
@@ -29,6 +22,11 @@ use function is_a;
  */
 final class PropertyCaptureRulesAssembler implements CaptureRuleSetAssembler
 {
+    public function __construct(
+        private readonly MatchConditionFactory $conditionFactory,
+    ) {
+    }
+
     /** @param PropertyRulesAssemblerEnvelope $envelope */
     public function assemble(CaptureRule $parent, CaptureRuleSetAssemblerEnvelope $envelope): ?CompositeRuleSet
     {
@@ -48,11 +46,9 @@ final class PropertyCaptureRulesAssembler implements CaptureRuleSetAssembler
              */
             $capture = $captureAttribute->newInstance();
 
-            $condition = $this->getCondition($capture, $parent);
-
             $rules->append(new CaptureExceptionRule(
                 $ruleSet,
-                $condition->compile(),
+                $this->getCondition($capture, $parent),
                 $capture->getMessage(),
                 $capture->getFormatter(),
             ));
@@ -65,54 +61,12 @@ final class PropertyCaptureRulesAssembler implements CaptureRuleSetAssembler
         return $ruleSet;
     }
 
-    private function getCondition(Capture $capture, CaptureRule $parent): CompositeMatchCondition
+    private function getCondition(Capture $capture, CaptureRule $parent): MatchCondition
     {
-        $conditions = [];
+        $matchCondition = $this->conditionFactory->getCondition($capture, $parent);
 
-        $conditions[] = $this->getExceptionClassCondition($capture);
-        $conditions[] = $this->getInvalidValueCondition($capture, $parent);
-        $conditions[] = $this->getExceptionClosureCondition($capture, $parent);
+        Assert::notNull($matchCondition);
 
-        return new CompositeMatchCondition(array_values(array_filter($conditions)));
-    }
-
-    private function getExceptionClassCondition(Capture $capture): MatchByExceptionClassCondition
-    {
-        return new MatchByExceptionClassCondition($capture->getExceptionClass());
-    }
-
-    private function getExceptionClosureCondition(Capture $capture, CaptureRule $parent): ?MatchCondition
-    {
-        $when = $capture->getWhen();
-
-        if (null === $when) {
-            return null;
-        }
-
-        $object = $parent->getEnclosingObject();
-
-        if ($when[0] === $object::class) {
-            $when = [$object, $when[1]];
-        }
-
-        /** @phpstan-ignore-next-line */
-        return new MatchWithClosureCondition($when(...));
-    }
-
-    private function getInvalidValueCondition(Capture $capture, CaptureRule $parent): ?MatchByInvalidValueCondition
-    {
-        if ('invalid_value' !== $capture->getCondition()) {
-            return null;
-        }
-
-        $exceptionClass = $capture->getExceptionClass();
-
-        if (!is_a($exceptionClass, InvalidValueException::class, true)) {
-            return null;
-        }
-
-        $value = $parent->getValue();
-
-        return new MatchByInvalidValueCondition($value);
+        return $matchCondition;
     }
 }

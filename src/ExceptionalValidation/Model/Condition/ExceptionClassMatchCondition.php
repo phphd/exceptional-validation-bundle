@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace PhPhD\ExceptionalValidation\Model\Condition;
 
-use Closure;
 use Throwable;
 
 /** @internal */
-final class MatchWithClosureCondition implements MatchCondition
+final class ExceptionClassMatchCondition implements MatchCondition
 {
     public function __construct(
-        private readonly Closure $condition,
+        /** @var class-string<Throwable> */
+        private readonly string $exceptionClass,
     ) {
     }
 
     public function matches(Throwable $exception): bool
     {
-        return ($this->condition)($exception);
+        return $exception instanceof $this->exceptionClass;
     }
 }
